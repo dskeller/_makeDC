@@ -1,4 +1,7 @@
 <config>
+  <ipaddress>10.0.0.2</ipaddress>
+  <subnetmask>24</subnetmask>
+  <gateway>10.0.0.1</gateway>
   <domainname>CONTOSO.COM</domainname>
   <netbios>CONTOSO</netbios>
   <domainmode>7</domainmode>
