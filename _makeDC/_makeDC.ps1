@@ -1,3 +1,44 @@
+<#
+  .SYNOPSIS
+  automatic creation domain controller
+
+  .DESCRIPTION
+  creates the first domain controller in a new active directory structure
+
+  .PARAMETER configfile
+  Configuration file with the parameters to set the static ip address of the host and create the new domain
+
+  .INPUTS
+  None. You cannot pipe objects to _makeDC.ps1
+
+  .OUTPUTS
+  None. You get no return of _makeDC.ps1
+
+  .EXAMPLE
+  PS> Get-Content ".\configDC1.xml"
+  <config>
+    <ipaddress>10.0.0.2</ipaddress>
+    <subnetmask>24</subnetmask>
+    <gateway>10.0.0.1</gateway>
+    <domainname>CONTOSO.COM</domainname>
+    <netbios>CONTOSO</netbios>
+    <domainmode>7</domainmode>
+    <smAdmPwd>SECRETPASSWORD</smAdmPwd>
+  </config>
+  PS> .\_makeDC.xml -configfile ".\configDC1.xml"
+  
+  .FUNCTIONALITY
+  Automatic creation of primary domain controller
+
+  .LINK
+  https://docs.microsoft.com/en-us/powershell/module/nettcpip
+
+  .LINK
+  https://docs.microsoft.com/en-us/powershell/module/servermanager/install-windowsfeature
+
+  .LINK
+  https://docs.microsoft.com/en-us/powershell/module/addsdeployment/install-addsforest
+#>
 [cmdletbinding()]
 param(
   [System.IO.file]$configfile

@@ -1,3 +1,42 @@
+<#
+  .SYNOPSIS
+  automatic creation additional domain controller
+
+  .DESCRIPTION
+  creates additional domain controller(s) in an existing active directory structure
+
+  .PARAMETER configfile
+  Configuration file with the parameters to set the static ip address of the host and join an existing domain
+
+  .INPUTS
+  None. You cannot pipe objects to _makeDC.ps1
+
+  .OUTPUTS
+  None. You get no return of _makeDC.ps1
+
+  .EXAMPLE
+  PS> Get-Content ".\configDCX.xml"
+  <config>
+  <ipaddress>10.0.0.3</ipaddress>
+  <subnetmask>24</subnetmask>
+  <gateway>10.0.0.1</gateway>
+  <domainname>CONTOSO.COM</domainname>
+  <smAdmPwd>SECRETPASSWORD</smAdmPwd>
+</config>
+  PS> .\_makeDCX.xml -configfile ".\configDCX.xml"
+  
+  .FUNCTIONALITY
+  Automatic creation of additional domain controller
+
+  .LINK
+  https://docs.microsoft.com/en-us/powershell/module/nettcpip
+
+  .LINK
+  https://docs.microsoft.com/en-us/powershell/module/servermanager/install-windowsfeature
+
+  .LINK
+  https://docs.microsoft.com/en-us/powershell/module/addsdeployment/install-addsdomaincontroller
+#>
 [cmdletbinding()]
 param(
   [System.IO.file]$configfile
