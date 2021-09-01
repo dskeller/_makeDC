@@ -41,17 +41,26 @@
 #>
 [cmdletbinding()]
 param(
-  [System.IO.file]$configfile
+  [System.IO.fileinfo]$configfile
 )
+#requires -RunAsAdministrator
 
-#import configfile
-[xml]$config = Get-Content -Path "$configfile"
+$Message = "Starting"
+Write-Output -InputObject $Message
 
-#validate config
+#convert relative path to absolute path for configfile
 #TODO
 
-#set netipaddress
+$Message = "Importing configuration file: '"+$configfile+"'"
+Write-Output -InputObject $Message
+[xml]$config = Get-Content -Path "$configfile"
 
+$Message = "Validate configuration file"
+Write-Output -InputObject $Message
+#TODO
+
+$Message = "Check network adapter"
+Write-Output -InputObject $Message
 # get network adapter / including case netadapter>1
 if ($((Get-NetAdapter | Measure-Object).Count) -lt 1){
   throw "No network adapter found"
@@ -64,22 +73,32 @@ elseif ($((Get-NetAdapter | Measure-Object).Count) -gt 1){
 }else{
   $netadapter = (Get-NetAdapter).Name
 }
+$Message = "Network-Adapter is: '"+$netadapter+"'"
+Write-Output -InputObject $Message
 
-# disable DHCP for network adapter
-Set-NetIPInterface -InterfaceAlias "$netadapter" -AddressFamily IPv4 -DHCP Disabled -PassThru
+$Message = "Disable DHCP for network adapter"
+Write-Output -InputObject $Message
+[void]$(Set-NetIPInterface -InterfaceAlias "$netadapter" -AddressFamily IPv4 -DHCP Disabled -PassThru)
  
-# set ip, subnet and gateway
-New-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "$netadapter" -IPAddress $($config.config.ipaddress) -PrefixLength $($config.config.subnetmask) -DefaultGateway $($config.config.gateway)
+$Message = "Set ip, subnet and gateway"
+Write-Output -InputObject $Message
+[void]$(New-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "$netadapter" -IPAddress $($config.config.ipaddress) -PrefixLength $($config.config.subnetmask) -DefaultGateway $($config.config.gateway))
  
-# set dns to server
-Set-DnsClientServerAddress -InterfaceAlias "$netadapter" -ServerAddresses $($config.config.ipaddress)
+$Message = "Set DNS to server"
+Write-Output -InputObject $Message
+[void]$(Set-DnsClientServerAddress -InterfaceAlias "$netadapter" -ServerAddresses $($config.config.ipaddress))
  
-# disable ipv6
-#Disable-NetAdapterBinding -Name "$netadapter" -ComponentID ms_tcpip6
+#$Message = "Disable ipv6"
+#Write-Output -InputObject $Message
+#[void]$(Disable-NetAdapterBinding -Name "$netadapter" -ComponentID ms_tcpip6)
 
-# install roles and features
-Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools -IncludeAllSubFeature
+$Message = "Install roles and features"
+Write-Output -InputObject $Message
+[void]$(Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools -IncludeAllSubFeature)
 
-# configure adds
+$Message = "Configure ADDS"
+Write-Output -InputObject $Message
 Install-ADDSForest -DomainName $($config.config.domainname) -DomainNetBiosName $($config.config.netbios) -DomainMode $($config.config.domainmode) -ForestMode $($config.config.domainmode) -SkipPreChecks -InstallDns:$true -SafeModeAdministratorPassword $(ConvertTo-SecureString $($config.config.smAdmPwd) -AsPlaintext -Force) -Force
 
+$Message = "Done"
+Write-Output -InputObject $Message
