@@ -94,11 +94,19 @@ Write-Output -InputObject $Message
 
 $Message = "Install roles and features"
 Write-Output -InputObject $Message
-[void]$(Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools -IncludeAllSubFeature)
+$rfresult = Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools -IncludeAllSubFeature
 
-$Message = "Configure ADDS"
-Write-Output -InputObject $Message
-Install-ADDSForest -DomainName $($config.config.domainname) -DomainNetBiosName $($config.config.netbios) -DomainMode $($config.config.domainmode) -ForestMode $($config.config.domainmode) -SkipPreChecks -InstallDns:$true -SafeModeAdministratorPassword $(ConvertTo-SecureString $($config.config.smAdmPwd) -AsPlaintext -Force) -Force
+if (($rfresult.Success -eq $true)-and($rfresult.Restart -eq 'No'))
+{
+  $Message = "Configure ADDS"
+  Write-Output -InputObject $Message
+  Install-ADDSForest -DomainName $($config.config.domainname) -DomainNetBiosName $($config.config.netbios) -DomainMode $($config.config.domainmode) -ForestMode $($config.config.domainmode) -SkipPreChecks -InstallDns:$true -SafeModeAdministratorPassword $(ConvertTo-SecureString $($config.config.smAdmPwd) -AsPlaintext -Force) -Force
 
-$Message = "Done"
-Write-Output -InputObject $Message
+  $Message = "Done"
+  Write-Output -InputObject $Message
+}
+else
+{
+  $Message = "Error installing roles and features"
+  Write-Output -InputObject $Message
+}

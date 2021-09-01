@@ -92,11 +92,18 @@ Write-Output -InputObject $Message
 
 $Message = "Install roles and features"
 Write-Output -InputObject $Message
-[void]$(Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools -IncludeAllSubFeature)
+$rfresult = Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools -IncludeAllSubFeature
 
-$Message = "Configure ADDS"
-Write-Output -InputObject $Message
-[void]$(Install-ADDSDomainController -Credential (Get-Credential Nocksoft\Administrator) -DomainName $($config.config.domainName) -SkipPreChecks -NoGlobalCatalog:$true -CriticalReplicationOnly:$false -InstallDns:$true -SiteName "Default-First-Site-Name" -SafeModeAdministratorPassword $(ConvertTo-SecureString $($config.config.smAdmPwd) -AsPlaintext -Force) -Force)
+if (($rfresult.Success -eq $true)-and($rfresult.Restart -eq 'No')){
+  $Message = "Configure ADDS"
+  Write-Output -InputObject $Message
+  [void]$(Install-ADDSDomainController -Credential (Get-Credential Nocksoft\Administrator) -DomainName $($config.config.domainName) -SkipPreChecks -NoGlobalCatalog:$true -CriticalReplicationOnly:$false -InstallDns:$true -SiteName "Default-First-Site-Name" -SafeModeAdministratorPassword $(ConvertTo-SecureString $($config.config.smAdmPwd) -AsPlaintext -Force) -Force)
 
-$Message = "Done"
-Write-Output -InputObject $Message
+  $Message = "Done"
+  Write-Output -InputObject $Message
+}
+else
+{
+  $Message = "Error installing roles and features"
+  Write-Output -InputObject $Message
+}
