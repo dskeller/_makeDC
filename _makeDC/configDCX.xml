@@ -2,6 +2,7 @@
   <ipaddress>10.0.0.3</ipaddress>
   <subnetmask>24</subnetmask>
   <gateway>10.0.0.1</gateway>
+  <dnsserver>10.0.0.2</dnsserver>
   <domainname>CONTOSO.COM</domainname>
   <smAdmPwd>SECRETPASSWORD</smAdmPwd>
 </config>
