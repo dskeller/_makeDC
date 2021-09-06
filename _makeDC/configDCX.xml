@@ -4,5 +4,5 @@
   <gateway>10.0.0.1</gateway>
   <dnsserver>10.0.0.2</dnsserver>
   <domainname>CONTOSO.COM</domainname>
-  <smAdmPwd>SECRETPASSWORD</smAdmPwd>
+  <smAdmPwd>P@$$w0rd1</smAdmPwd>
 </config>
