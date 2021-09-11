@@ -62,15 +62,20 @@ Write-Output -InputObject $Message
 $Message = "Check network adapter"
 Write-Output -InputObject $Message
 # get network adapter / including case netadapter>1
-if ($((Get-NetAdapter | Measure-Object).Count) -lt 1){
+if ($((Get-NetAdapter | Measure-Object).Count) -lt 1)
+{
   throw "No network adapter found"
 }
-elseif ($((Get-NetAdapter | Measure-Object).Count) -gt 1){
+elseif ($((Get-NetAdapter | Measure-Object).Count) -gt 1)
+{
   $netadapter = Read-Host -prompt "Please specifiy the name of the network adapter to use"
-  if (-not(Get-NetAdapter -Name $netadapter)){
+  if (-not(Get-NetAdapter -Name $netadapter))
+  {
     throw "No network adapter found with name '$netadapter'"
   }
-}else{
+}
+else
+{
   $netadapter = (Get-NetAdapter).Name
 }
 $Message = "Network-Adapter is: '"+$netadapter+"'"
@@ -79,15 +84,15 @@ Write-Output -InputObject $Message
 $Message = "Disable DHCP for network adapter"
 Write-Output -InputObject $Message
 [void]$(Set-NetIPInterface -InterfaceAlias "$netadapter" -AddressFamily IPv4 -DHCP Disabled -PassThru)
- 
+
 $Message = "Set ip, subnet and gateway"
 Write-Output -InputObject $Message
 [void]$(New-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "$netadapter" -IPAddress $($config.config.ipaddress) -PrefixLength $($config.config.subnetmask) -DefaultGateway $($config.config.gateway))
- 
+
 $Message = "Set DNS to server"
 Write-Output -InputObject $Message
 [void]$(Set-DnsClientServerAddress -InterfaceAlias "$netadapter" -ServerAddresses $($config.config.ipaddress))
- 
+
 #$Message = "Disable ipv6"
 #Write-Output -InputObject $Message
 #[void]$(Disable-NetAdapterBinding -Name "$netadapter" -ComponentID ms_tcpip6)
@@ -96,7 +101,7 @@ $Message = "Install roles and features"
 Write-Output -InputObject $Message
 $rfresult = Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools -IncludeAllSubFeature
 
-if (($rfresult.Success -eq $true)-and($rfresult.Restart -eq 'No'))
+if (($rfresult.Success -eq $true)-and($rfresult.RestartNeeded -eq 'No'))
 {
   $Message = "Configure ADDS"
   Write-Output -InputObject $Message
