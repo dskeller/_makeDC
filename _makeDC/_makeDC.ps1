@@ -26,7 +26,7 @@
     <smAdmPwd>SECRETPASSWORD</smAdmPwd>
   </config>
   PS> .\_makeDC.xml -configfile ".\configDC1.xml"
-  
+
   .FUNCTIONALITY
   Automatic creation of primary domain controller
 
@@ -108,6 +108,16 @@ if (($rfresult.Success -eq $true)-and($rfresult.RestartNeeded -eq 'No'))
   Install-ADDSForest -DomainName $($config.config.domainname) -DomainNetBiosName $($config.config.netbios) -DomainMode $($config.config.domainmode) -ForestMode $($config.config.domainmode) -SkipPreChecks -InstallDns:$true -SafeModeAdministratorPassword $(ConvertTo-SecureString $($config.config.smAdmPwd) -AsPlaintext -Force) -Force
 
   $Message = "Done"
+  Write-Output -InputObject $Message
+}
+elseif (($rfresult.Success -eq $true)-and($rfresult.RestartNeeded -eq 'YES'))
+{
+  $Message = "Installation success. Restart needed before configuration of ADDS"
+  Write-Output -InputObject $Message
+}
+elseif ($rfresult.Success -eq $false)
+{
+  $Message = "Installation not successful"
   Write-Output -InputObject $Message
 }
 else
