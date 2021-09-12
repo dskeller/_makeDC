@@ -5,5 +5,5 @@
   <domainname>CONTOSO.COM</domainname>
   <netbios>CONTOSO</netbios>
   <domainmode>7</domainmode>
-  <smAdmPwd>SECRETPASSWORD</smAdmPwd>
+  <smAdmPwd>P@$$w0rd1</smAdmPwd>
 </config>
